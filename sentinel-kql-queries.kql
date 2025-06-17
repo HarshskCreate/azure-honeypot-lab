@@ -1,0 +1,15 @@
+Failed RDP Logins Attempts
+| where EventID == 4625
+| where AccountType == "User"
+| where LogonType == 10 // RemoteInteractive = RDP
+| summarize FailedAttempts = count() by Account, IPAddress, bin(TimeGenerated, 1h)
+
+Successful RDP Logins
+| where EventID == 4624
+| where LogonType == 10
+| summarize SuccessfulRDPs = count() by Account, Computer, bin(TimeGenerated, 1h)
+
+Top Attacking IPs
+| where EventID == 4625
+| summarize Attempts = count() by IPAddress
+| top 10 by Attempts
